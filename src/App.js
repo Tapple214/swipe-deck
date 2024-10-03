@@ -6,6 +6,21 @@ import { useSwipe } from "./components/SwipeDeck";
 export default function App() {
   // Swiping functionality
   // returned functions = useSwipe({ params })
+
+  const items = [
+    { name: "john" },
+    { name: "emma" },
+    { name: "michael" },
+    { name: "sophia" },
+    { name: "william" },
+    { name: "olivia" },
+    { name: "james" },
+    { name: "isabella" },
+    { name: "benjamin" },
+    { name: "mia" },
+    { name: "alexander" },
+  ];
+
   const {
     swipeContainerRef,
     allCardsRef,
@@ -16,13 +31,7 @@ export default function App() {
     isLoaded,
     cardZIndex,
   } = useSwipe({
-    listings,
-    sgId,
-    router,
-    toast,
-    handleClose,
-    handleShow,
-    reset,
+    items,
   });
 
   return (
@@ -34,19 +43,29 @@ export default function App() {
       >
         <div className="tinder--cards">
           {noMoreCards ? (
-            <NoListings />
+            <p>No more cards</p>
           ) : (
-            
-            <ListingCards
-              listings={listings}
-              removedCardIds={removedCardIds}
-              allCardsRef={allCardsRef}
-              cardTransform={cardTransform}
-              cardZIndex={cardZIndex}
-              sgId={sgId}
-              width={dimensions.width}
-              height={dimensions.height}
-            />
+            <>
+              {items.map((item, index) => (
+                <div
+                  key={index}
+                  className={`card ${
+                    removedCardIds.has(index) ? "removed" : ""
+                  }`}
+                  style={{
+                    transform:
+                      cardTransform && removedCardIds.has(index)
+                        ? cardTransform
+                        : "",
+                    zIndex: cardZIndex[index] || "auto",
+                  }}
+                  ref={(crd) => (allCardsRef.current[index] = crd)}
+                  data-listing-id={index}
+                >
+                  <p>{item.name}</p>
+                </div>
+              ))}
+            </>
           )}
         </div>
 
@@ -56,6 +75,7 @@ export default function App() {
             <button onClick={() => setAction("dislike")} id="dislike">
               <i className="bi bi-hand-thumbs-down-fill"></i>
             </button>
+
             <button onClick={() => setAction("want")} id="want">
               <i className="bi bi-bag-heart-fill"></i>
             </button>
