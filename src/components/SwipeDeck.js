@@ -83,13 +83,11 @@ export function useSwipe({ items }) {
 
     // Find the first card that has not been removed
     const card = allCardsRef.current.find(
-      (c) => c && !removedCardIds.has(c.dataset.listingId)
+      (c) => c && !removedCardIds.has(c.dataset.index)
     );
     if (!card) return;
 
-    const listing = items.find(
-      (items) => listing.id === card.dataset.listingId
-    );
+    const listing = items.find((items) => listing.id === card.dataset.index);
 
     if (listing) {
       await handleAction(card, listing);
@@ -122,7 +120,7 @@ export function useSwipe({ items }) {
 
     // Filter out cards that have been removed
     const newCards = allCardsRef.current.filter(
-      (card) => card && !removedCardIds.has(card.dataset.listingId)
+      (card) => card && !removedCardIds.has(card.dataset.index)
     );
 
     // If no cards are left, mark noMoreCards as true
@@ -136,7 +134,7 @@ export function useSwipe({ items }) {
       if (card) {
         setCardZIndex((prevZIndex) => ({
           ...prevZIndex,
-          [card.dataset.listingId]: newCards.length - index,
+          [card.dataset.index]: newCards.length - index,
         }));
       }
     });
