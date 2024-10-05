@@ -40,6 +40,7 @@ export function useSwipe({ items }) {
       return newSet;
     });
 
+    console.log("Removed card IDs:", removedCardIds);
     setAction(null);
   };
 

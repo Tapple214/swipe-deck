@@ -1,3 +1,4 @@
+// App.js
 import "./App.css";
 import { useSwipe } from "./components/SwipeDeck";
 
@@ -42,10 +43,7 @@ export default function App() {
                 key={item.id}
                 className={`card ${removedCardIds.has(index) ? "removed" : ""}`}
                 style={{
-                  transform:
-                    cardTransform && removedCardIds.has(index)
-                      ? cardTransform
-                      : "",
+                  transform: index === 0 ? cardTransform : "",
                   zIndex: cardZIndex[index] || "auto",
                 }}
                 ref={(crd) => (allCardsRef.current[index] = crd)}
@@ -57,17 +55,15 @@ export default function App() {
           )}
         </div>
         <div className="button-container">
-          <div>
-            <button onClick={() => setAction("dislike")} id="dislike">
-              Dislike
-            </button>
-            <button onClick={() => setAction("want")} id="want">
-              Want
-            </button>
-            <button onClick={() => setAction("like")} id="like">
-              Like
-            </button>
-          </div>
+          <button onClick={() => setAction("dislike")} id="dislike">
+            Dislike
+          </button>
+          <button onClick={() => setAction("want")} id="want">
+            Want
+          </button>
+          <button onClick={() => setAction("like")} id="like">
+            Like
+          </button>
         </div>
       </div>
     </div>
