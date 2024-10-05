@@ -8,27 +8,25 @@ export function useSwipe({ items }) {
   const [action, setAction] = useState(null);
   const [noMoreCards, setNoMoreCards] = useState(false);
   const [removedCardIds, setRemovedCardIds] = useState(new Set());
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [triggerRerender, setTriggerRerender] = useState(false);
-
   const [cardTransform, setCardTransform] = useState("");
   const [cardZIndex, setCardZIndex] = useState({});
 
   const handleAction = async (card, index) => {
     const moveOutWidth = document.body.clientWidth * 1.5;
-    const moveOutHeight = document.body.clientHeight * 1.5;
     let direction = 0;
 
     if (action === "like") {
       direction = moveOutWidth;
+      setCardTransform(`translate(${direction}px, 0) rotate(30deg)`);
     } else if (action === "dislike") {
       direction = -moveOutWidth;
+      setCardTransform(`translate(${direction}px, 0) rotate(-30deg)`);
     } else if (action === "want") {
-      direction = -moveOutHeight;
+      direction = 0;
+      setCardTransform(`translate(0, -${moveOutWidth}px)`);
     }
-    const rotation = action === "like" ? 30 : -30;
-
-    setCardTransform(`translate(${direction}px, 0px) rotate(${rotation}deg)`);
 
     // Mark the card as "removed"
     setRemovedCardIds((prev) => {
@@ -40,11 +38,18 @@ export function useSwipe({ items }) {
       return newSet;
     });
 
-    console.log("Removed card IDs:", removedCardIds);
+    // Update active card index to the next card
+    setActiveCardIndex((prevIndex) => {
+      if (prevIndex + 1 < items.length) {
+        return prevIndex + 1;
+      }
+      return prevIndex;
+    });
+
     setAction(null);
   };
 
-  const handleSwipe = useCallback(async () => {
+  const handleSwipe = useCallback(() => {
     if (!action || items.length === 0) return;
 
     const card = allCardsRef.current.find(
@@ -55,9 +60,9 @@ export function useSwipe({ items }) {
     const item = items[card.dataset.index];
 
     if (item) {
-      await handleAction(card, card.dataset.index);
+      handleAction(card, card.dataset.index);
     }
-  }, [action, items]);
+  }, [action, items, removedCardIds]);
 
   useEffect(() => {
     if (cardsInitialized && action) {
@@ -74,7 +79,6 @@ export function useSwipe({ items }) {
     }
 
     if (!allCardsRef.current || allCardsRef.current.length === 0) {
-      setTriggerRerender((prev) => !prev);
       return;
     }
 
@@ -98,14 +102,7 @@ export function useSwipe({ items }) {
 
     setIsLoaded(true);
     setCardsInitialized(true);
-  }, [items, removedCardIds, triggerRerender]);
-
-  useEffect(() => {
-    if (!isLoaded && allCardsRef.current.length > 0) {
-      setIsLoaded(true);
-      setCardsInitialized(true);
-    }
-  }, [isLoaded, allCardsRef.current.length, items]);
+  }, [items, removedCardIds]);
 
   return {
     swipeContainerRef,
@@ -117,5 +114,6 @@ export function useSwipe({ items }) {
     cardTransform,
     isLoaded,
     cardZIndex,
+    activeCardIndex,
   };
 }

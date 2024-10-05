@@ -1,4 +1,3 @@
-// App.js
 import "./App.css";
 import { useSwipe } from "./components/SwipeDeck";
 
@@ -26,6 +25,7 @@ export default function App() {
     cardTransform,
     isLoaded,
     cardZIndex,
+    activeCardIndex,
   } = useSwipe({ items });
 
   return (
@@ -38,20 +38,32 @@ export default function App() {
           {noMoreCards ? (
             <p>No more cards</p>
           ) : (
-            items.map((item, index) => (
-              <div
-                key={item.id}
-                className={`card ${removedCardIds.has(index) ? "removed" : ""}`}
-                style={{
-                  transform: index === 0 ? cardTransform : "",
-                  zIndex: cardZIndex[index] || "auto",
-                }}
-                ref={(crd) => (allCardsRef.current[index] = crd)}
-                data-index={index}
-              >
-                <p>{item.name}</p>
-              </div>
-            ))
+            items.map((item, index) => {
+              const isActive = activeCardIndex === index;
+              const isRemoved = removedCardIds.has(index);
+
+              const currentTransform = isActive
+                ? cardTransform
+                : isRemoved
+                ? "translate(0, 0)" // Reset for removed cards
+                : ""; // No transform for inactive cards
+
+              return (
+                <div
+                  key={item.id}
+                  className={`card ${isRemoved ? "removed" : ""}`}
+                  style={{
+                    transform: currentTransform,
+                    zIndex: cardZIndex[index] || "auto",
+                    transition: "transform 0.3s ease-out",
+                  }}
+                  ref={(crd) => (allCardsRef.current[index] = crd)}
+                  data-index={index}
+                >
+                  <p>{item.name}</p>
+                </div>
+              );
+            })
           )}
         </div>
         <div className="button-container">
