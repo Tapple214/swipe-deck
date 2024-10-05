@@ -22,7 +22,7 @@ export default function App() {
     noMoreCards,
     removedCardIds,
     setAction,
-    cardTransform,
+    activeTransform,
     isLoaded,
     cardZIndex,
     activeCardIndex,
@@ -41,12 +41,7 @@ export default function App() {
             items.map((item, index) => {
               const isActive = activeCardIndex === index;
               const isRemoved = removedCardIds.has(index);
-
-              const currentTransform = isActive
-                ? cardTransform
-                : isRemoved
-                ? "translate(0, 0)" // Reset for removed cards
-                : ""; // No transform for inactive cards
+              const currentTransform = isActive ? activeTransform : "";
 
               return (
                 <div
