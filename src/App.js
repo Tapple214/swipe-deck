@@ -39,9 +39,9 @@ export default function App() {
             <p>No more cards</p>
           ) : (
             items.map((item, index) => {
-              const isActive = activeCardIndex === index;
               const isRemoved = removedCardIds.has(index);
-              const currentTransform = isActive ? activeTransform : "";
+              const currentTransform =
+                activeCardIndex === index ? activeTransform : "";
 
               return (
                 <div
